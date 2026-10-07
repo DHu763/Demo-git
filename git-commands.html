@@ -3,120 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Các Câu Lệnh Git Phổ Biến</title>
+    <title>Giới thiệu các lệnh Git cơ bản</title>
     <style>
-        :root {
-            --primary: #f05032; /* Git orange */
-            --bg-color: #f4f4f9;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --code-bg: #1e1e1e;
-            --code-text: #d4d4d4;
-        }
-        body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 40px 20px;
-            display: flex;
-            justify-content: center;
-        }
-        .container {
-            max-width: 900px;
-            width: 100%;
-        }
-        h1 {
-            text-align: center;
-            color: var(--primary);
-            font-size: 2.5rem;
-            margin-bottom: 40px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        .command-card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .command-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-        }
-        .command-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-top: 0;
-            margin-bottom: 10px;
-            color: #2c3e50;
-        }
-        .command-desc {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            margin-bottom: 15px;
-            color: #555;
-        }
-        .code-block {
-            background-color: var(--code-bg);
-            color: var(--code-text);
-            padding: 15px;
-            border-radius: 8px;
-            font-family: 'Courier New', Courier, monospace;
-            overflow-x: auto;
-            position: relative;
-        }
-        .code-block::before {
-            content: '$ ';
-            color: #e06c75;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; color: #333; margin: 0; padding: 0; }
+        header { background-color: #24292e; color: #fff; padding: 20px 0; text-align: center; }
+        .container { max-width: 800px; margin: 30px auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { margin: 0; }
+        h2 { color: #f05032; border-bottom: 2px solid #eaecef; padding-bottom: 10px; margin-top: 30px; }
+        .command-block { background-color: #2d333b; color: #adbac7; padding: 15px; border-radius: 5px; font-family: monospace; overflow-x: auto; margin-top: 10px; }
+        .description { font-size: 1.1em; margin-bottom: 5px; margin-top: 15px; }
+        code { color: #539bf5; }
     </style>
 </head>
 <body>
+    <header>
+        <h1>Git Commands Cheat Sheet</h1>
+    </header>
     <div class="container">
-        <h1>Các Câu Lệnh Git Phổ Biến</h1>
+        <h2>1. Khởi tạo và Clone</h2>
+        <div class="description">Khởi tạo một repository mới:</div>
+        <div class="command-block">git init</div>
+        <div class="description">Clone một repository từ xa:</div>
+        <div class="command-block">git clone [url]</div>
 
-        <div class="command-card">
-            <h2 class="command-title">Khởi tạo & Sao chép</h2>
-            <p class="command-desc">Tạo mới hoặc sao chép một kho lưu trữ hiện có.</p>
-            <div class="code-block">git init</div>
-            <br>
-            <div class="code-block">git clone [url]</div>
-        </div>
+        <h2>2. Thêm và Commit</h2>
+        <div class="description">Thêm các thay đổi vào staging area (chuẩn bị commit):</div>
+        <div class="command-block">git add .</div>
+        <div class="description">Lưu các thay đổi với một thông điệp rõ ràng:</div>
+        <div class="command-block">git commit -m "Thông điệp commit"</div>
 
-        <div class="command-card">
-            <h2 class="command-title">Thêm & Lưu thay đổi (Add & Commit)</h2>
-            <p class="command-desc">Đưa các thay đổi vào khu vực chờ và lưu chúng vào lịch sử.</p>
-            <div class="code-block">git add .</div>
-            <br>
-            <div class="code-block">git commit -m "Thông điệp commit"</div>
-        </div>
+        <h2>3. Nhánh (Branching)</h2>
+        <div class="description">Liệt kê tất cả các nhánh hiện có:</div>
+        <div class="command-block">git branch</div>
+        <div class="description">Tạo một nhánh mới:</div>
+        <div class="command-block">git branch [branch-name]</div>
+        <div class="description">Chuyển sang làm việc trên một nhánh khác:</div>
+        <div class="command-block">git checkout [branch-name]</div>
 
-        <div class="command-card">
-            <h2 class="command-title">Kiểm tra trạng thái & Lịch sử</h2>
-            <p class="command-desc">Xem những file nào đã thay đổi và lịch sử các lần commit.</p>
-            <div class="code-block">git status</div>
-            <br>
-            <div class="code-block">git log</div>
-        </div>
+        <h2>4. Đồng bộ hóa (Syncing)</h2>
+        <div class="description">Lấy dữ liệu mới nhất từ remote server về máy:</div>
+        <div class="command-block">git pull origin [branch-name]</div>
+        <div class="description">Đẩy các thay đổi của bạn lên remote server:</div>
+        <div class="command-block">git push origin [branch-name]</div>
 
-        <div class="command-card">
-            <h2 class="command-title">Đồng bộ hóa (Push & Pull)</h2>
-            <p class="command-desc">Cập nhật code từ server về máy hoặc đẩy code từ máy lên server.</p>
-            <div class="code-block">git pull origin main</div>
-            <br>
-            <div class="code-block">git push origin main</div>
-        </div>
-
-        <div class="command-card">
-            <h2 class="command-title">Nhánh (Branching)</h2>
-            <p class="command-desc">Làm việc với các nhánh để phát triển tính năng song song.</p>
-            <div class="code-block">git branch</div>
-            <br>
-            <div class="code-block">git checkout -b [tên-nhánh-mới]</div>
-        </div>
+        <h2>5. Trạng thái và Lịch sử</h2>
+        <div class="description">Kiểm tra trạng thái của các file (đã sửa, chưa track...):</div>
+        <div class="command-block">git status</div>
+        <div class="description">Xem lịch sử các commit đã thực hiện:</div>
+        <div class="command-block">git log</div>
     </div>
 </body>
 </html>
