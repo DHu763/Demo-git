@@ -3,54 +3,1048 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giới thiệu các lệnh Git cơ bản</title>
+    <title>Cẩm Nang Lệnh Git Toàn Diện - Git Commands Cheat Sheet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; color: #333; margin: 0; padding: 0; }
-        header { background-color: #24292e; color: #fff; padding: 20px 0; text-align: center; }
-        .container { max-width: 800px; margin: 30px auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h1 { margin: 0; }
-        h2 { color: #f05032; border-bottom: 2px solid #eaecef; padding-bottom: 10px; margin-top: 30px; }
-        .command-block { background-color: #2d333b; color: #adbac7; padding: 15px; border-radius: 5px; font-family: monospace; overflow-x: auto; margin-top: 10px; }
-        .description { font-size: 1.1em; margin-bottom: 5px; margin-top: 15px; }
-        code { color: #539bf5; }
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #111827;
+            --bg-card: rgba(17, 24, 39, 0.75);
+            --bg-card-hover: rgba(30, 41, 59, 0.85);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-accent: rgba(240, 80, 50, 0.3);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --git-orange: #f05032;
+            --git-orange-glow: rgba(240, 80, 50, 0.25);
+            --accent-cyan: #38bdf8;
+            --accent-emerald: #34d399;
+            --accent-purple: #c084fc;
+            --code-bg: #030712;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(240, 80, 50, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 60%, rgba(56, 189, 248, 0.06) 0%, transparent 45%);
+            background-attachment: fixed;
+            padding-bottom: 60px;
+        }
+
+        /* Header & Hero */
+        header {
+            position: relative;
+            padding: 50px 20px 40px;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.8) 0%, transparent 100%);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(240, 80, 50, 0.12);
+            border: 1px solid rgba(240, 80, 50, 0.25);
+            color: #ff7a59;
+            padding: 6px 16px;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--git-orange);
+            box-shadow: 0 0 10px var(--git-orange);
+        }
+
+        h1 {
+            font-size: clamp(2.2rem, 5vw, 3.4rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #ffffff 30%, #f05032 75%, #ff9472 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 680px;
+            margin: 0 auto 30px;
+        }
+
+        /* Git Workflow Interactive Diagram */
+        .workflow-box {
+            max-width: 1040px;
+            margin: 0 auto 40px;
+            padding: 24px;
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        .workflow-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-primary);
+        }
+
+        .workflow-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 16px;
+            position: relative;
+        }
+
+        .stage-card {
+            background: rgba(3, 7, 18, 0.6);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stage-card:hover {
+            border-color: var(--git-orange);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px var(--git-orange-glow);
+        }
+
+        .stage-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--accent-cyan);
+            margin-bottom: 6px;
+        }
+
+        .stage-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .stage-action {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            background: rgba(240, 80, 50, 0.15);
+            color: #ff9472;
+            border-radius: 6px;
+        }
+
+        /* Controls: Search & Categories */
+        .controls-wrapper {
+            max-width: 1040px;
+            margin: 0 auto 30px;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .search-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+            width: 20px;
+            height: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 9999px;
+            padding: 14px 20px 14px 48px;
+            color: #fff;
+            font-size: 1rem;
+            font-family: inherit;
+            outline: none;
+            transition: var(--transition);
+            backdrop-filter: blur(8px);
+        }
+
+        .search-input:focus {
+            border-color: var(--git-orange);
+            box-shadow: 0 0 0 4px var(--git-orange-glow);
+            background: rgba(17, 24, 39, 0.95);
+        }
+
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .tag-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tag-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .tag-btn.active {
+            background: var(--git-orange);
+            color: #fff;
+            border-color: var(--git-orange);
+            box-shadow: 0 4px 14px var(--git-orange-glow);
+        }
+
+        /* Command Cards Section */
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .category-group {
+            margin-bottom: 40px;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .category-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .category-count {
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-secondary);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .card:hover {
+            border-color: rgba(240, 80, 50, 0.4);
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #f1f5f9;
+        }
+
+        .card-badge {
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .card-desc {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+            flex-grow: 1;
+        }
+
+        .code-box {
+            position: relative;
+            background: var(--code-bg);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            padding: 12px 42px 12px 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.88rem;
+            color: #38bdf8;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .copy-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .copy-btn:hover {
+            color: #fff;
+            background: rgba(240, 80, 50, 0.3);
+            border-color: var(--git-orange);
+        }
+
+        .copy-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1e293b;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--accent-emerald);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transform: translateY(100px);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            color: var(--accent-emerald);
+        }
+
+        /* Quick Tips Section */
+        .tips-banner {
+            max-width: 1040px;
+            margin: 40px auto 0;
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(135deg, rgba(240, 80, 50, 0.1) 0%, rgba(56, 189, 248, 0.05) 100%);
+            border: 1px solid rgba(240, 80, 50, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .tips-banner h3 {
+            color: #ff9472;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tips-banner ul {
+            padding-left: 20px;
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .tips-banner code {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #38bdf8;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 24px;
+        }
+
+        footer a {
+            color: var(--git-orange);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .workflow-grid {
+                grid-template-columns: 1fr;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            header {
+                padding: 30px 15px;
+            }
+        }
     </style>
 </head>
 <body>
+
+    <!-- Header Section -->
     <header>
-        <h1>Git Commands Cheat Sheet</h1>
+        <div class="badge">
+            <span class="badge-dot"></span>
+            Git Reference Guide
+        </div>
+        <h1>Cẩm Nang Các Lệnh Git</h1>
+        <p class="subtitle">Tổng hợp đầy đủ các câu lệnh Git thông dụng và nâng cao dành cho lập trình viên. Tra cứu nhanh, sao chép bằng 1 cú click.</p>
     </header>
-    <div class="container">
-        <h2>1. Khởi tạo và Clone</h2>
-        <div class="description">Khởi tạo một repository mới:</div>
-        <div class="command-block">git init</div>
-        <div class="description">Clone một repository từ xa:</div>
-        <div class="command-block">git clone [url]</div>
 
-        <h2>2. Thêm và Commit</h2>
-        <div class="description">Thêm các thay đổi vào staging area (chuẩn bị commit):</div>
-        <div class="command-block">git add .</div>
-        <div class="description">Lưu các thay đổi với một thông điệp rõ ràng:</div>
-        <div class="command-block">git commit -m "Thông điệp commit"</div>
-
-        <h2>3. Nhánh (Branching)</h2>
-        <div class="description">Liệt kê tất cả các nhánh hiện có:</div>
-        <div class="command-block">git branch</div>
-        <div class="description">Tạo một nhánh mới:</div>
-        <div class="command-block">git branch [branch-name]</div>
-        <div class="description">Chuyển sang làm việc trên một nhánh khác:</div>
-        <div class="command-block">git checkout [branch-name]</div>
-
-        <h2>4. Đồng bộ hóa (Syncing)</h2>
-        <div class="description">Lấy dữ liệu mới nhất từ remote server về máy:</div>
-        <div class="command-block">git pull origin [branch-name]</div>
-        <div class="description">Đẩy các thay đổi của bạn lên remote server:</div>
-        <div class="command-block">git push origin [branch-name]</div>
-
-        <h2>5. Trạng thái và Lịch sử</h2>
-        <div class="description">Kiểm tra trạng thái của các file (đã sửa, chưa track...):</div>
-        <div class="command-block">git status</div>
-        <div class="description">Xem lịch sử các commit đã thực hiện:</div>
-        <div class="command-block">git log</div>
+    <!-- Interactive Git Workflow -->
+    <div class="workflow-box" style="margin-top: -20px;">
+        <div class="workflow-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f05032" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/><path d="M6 9a9 9 0 0 1 9-9"/></svg>
+            Quy trình làm việc (Git Architecture Workflow)
+        </div>
+        <div class="workflow-grid">
+            <div class="stage-card">
+                <div class="stage-name">1. Working Directory</div>
+                <div class="stage-desc">Thư mục chứa mã nguồn làm việc trực tiếp trên máy của bạn</div>
+                <span class="stage-action">git add . ➔</span>
+            </div>
+            <div class="stage-card">
+                <div class="stage-name">2. Staging Area (Index)</div>
+                <div class="stage-desc">Nơi tập hợp các thay đổi sẵn sàng để đóng gói commit</div>
+                <span class="stage-action">git commit -m ➔</span>
+            </div>
+            <div class="stage-card">
+                <div class="stage-name">3. Local Repository</div>
+                <div class="stage-desc">Kho lưu trữ lịch sử commit trên máy cá nhân (.git)</div>
+                <span class="stage-action">git push ➔</span>
+            </div>
+            <div class="stage-card">
+                <div class="stage-name">4. Remote Repository</div>
+                <div class="stage-desc">Kho mã nguồn chung từ xa (GitHub, GitLab, Bitbucket)</div>
+                <span class="stage-action">⮜ git pull / fetch</span>
+            </div>
+        </div>
     </div>
+
+    <!-- Controls: Search & Category Filter -->
+    <div class="controls-wrapper">
+        <div class="search-container">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="searchInput" class="search-input" placeholder="Tìm kiếm câu lệnh, từ khóa (ví dụ: clone, commit, branch, merge, stash, undo)...">
+        </div>
+        <div class="filter-tags" id="filterTags">
+            <button class="tag-btn active" data-category="all">Tất cả</button>
+            <button class="tag-btn" data-category="setup">Khởi tạo & Cấu hình</button>
+            <button class="tag-btn" data-category="basic">Lưu thay đổi (Commit)</button>
+            <button class="tag-btn" data-category="branch">Nhánh (Branching)</button>
+            <button class="tag-btn" data-category="sync">Remote & Đồng bộ</button>
+            <button class="tag-btn" data-category="inspect">Kiểm tra & Lịch sử</button>
+            <button class="tag-btn" data-category="undo">Hoàn tác & Phục hồi</button>
+        </div>
+    </div>
+
+    <!-- Main Command Directory -->
+    <div class="container" id="commandsContainer">
+        <!-- Section: Khởi tạo & Cấu hình -->
+        <div class="category-group" data-category="setup">
+            <div class="category-header">
+                <h2 class="category-title">1. Khởi tạo & Cấu hình (Setup & Config)</h2>
+                <span class="category-count">4 lệnh</span>
+            </div>
+            <div class="grid">
+                <div class="card" data-tags="init start repo">
+                    <div class="card-header">
+                        <span class="card-title">Khởi tạo Repository</span>
+                        <span class="card-badge">Cơ bản</span>
+                    </div>
+                    <p class="card-desc">Khởi tạo một Git repository mới trong thư mục hiện tại.</p>
+                    <div class="code-box">
+                        <code>git init</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git init')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" data-tags="clone download repo remote">
+                    <div class="card-header">
+                        <span class="card-title">Clone Repository</span>
+                        <span class="card-badge">Cơ bản</span>
+                    </div>
+                    <p class="card-desc">Tải về một repository hoàn chỉnh từ remote server về máy.</p>
+                    <div class="code-box">
+                        <code>git clone &lt;repo-url&gt;</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git clone <repo-url>')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" data-tags="config user email name">
+                    <div class="card-header">
+                        <span class="card-title">Cấu hình Tác giả</span>
+                        <span class="card-badge">Setup</span>
+                    </div>
+                    <p class="card-desc">Cài đặt tên và email sẽ gán cho các commit của bạn.</p>
+                    <div class="code-box">
+                        <code>git config --global user.name "Tên Bạn"</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git config --global user.name \"Tên Bạn\"')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" data-tags="config user email">
+                    <div class="card-header">
+                        <span class="card-title">Cấu hình Email</span>
+                        <span class="card-badge">Setup</span>
+                    </div>
+                    <p class="card-desc">Cài đặt email cho commit trên toàn bộ hệ thống.</p>
+                    <div class="code-box">
+                        <code>git config --global user.email "email@domain.com"</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git config --global user.email \"email@domain.com\"')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Lưu thay đổi (Commit) -->
+        <div class="category-group" data-category="basic">
+            <div class="category-header">
+                <h2 class="category-title">2. Lưu Thay Đổi (Staging & Commits)</h2>
+                <span class="category-count">4 lệnh</span>
+            </div>
+            <div class="grid">
+                <div class="card" data-tags="add stage file">
+                    <div class="card-header">
+                        <span class="card-title">Đưa file vào Staging</span>
+                        <span class="card-badge">Cơ bản</span>
+                    </div>
+                    <p class="card-desc">Thêm toàn bộ file thay đổi vào staging để chuẩn bị commit.</p>
+                    <div class="code-box">
+                        <code>git add .</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git add .')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" data-tags="add specific file">
+                    <div class="card-header">
+                        <span class="card-title">Thêm File Cụ Thể</span>
+                        <span class="card-badge">Cơ bản</span>
+                    </div>
+                    <p class="card-desc">Thêm chính xác một tập tin được chỉ định vào staging.</p>
+                    <div class="code-box">
+                        <code>git add &lt;file-path&gt;</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git add <file-path>')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" data-tags="commit message save">
+                    <div class="card-header">
+                        <span class="card-title">Tạo Commit Mới</span>
+                        <span class="card-badge">Cơ bản</span>
+                    </div>
+                    <p class="card-desc">Ghi nhận phiên bản lưu mới kèm theo thông điệp mô tả thay đổi.</p>
+                    <div class="code-box">
+                        <code>git commit -m "Thông điệp commit"</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git commit -m \"Thông điệp commit\"')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" data-tags="commit amend fix typo">
+                    <div class="card-header">
+                        <span class="card-title">Sửa Commit Gần Nhất</span>
+                        <span class="card-badge">Mẹo hay</span>
+                    </div>
+                    <p class="card-desc">Gộp thêm file mới hoặc sửa đổi nội dung tin nhắn commit gần nhất.</p>
+                    <div class="code-box">
+                        <code>git commit --amend</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git commit --amend')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Nhánh & Hợp nhất -->
+        <div class="category-group" data-category="branch">
+            <div class="category-header">
+                <h2 class="category-title">3. Quản Lý Nhánh (Branching & Merging)</h2>
+                <span class="category-count">5 lệnh</span>
+            </div>
+            <div class="grid">
+                <div class="card" data-tags="branch list xem nhanh">
+                    <div class="card-header">
+                        <span class="card-title">Liệt kê các nhánh</span>
+                        <span class="card-badge">Nhánh</span>
+                    </div>
+                    <p class="card-desc">Xem danh sách các nhánh local và biết được nhánh đang kích hoạt.</p>
+                    <div class="code-box">
+                        <code>git branch -a</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git branch -a')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" data-tags="checkout switch branch tao nhanh moi">
+                    <div class="card-header">
+                        <span class="card-title">Tạo & Chuyển nhánh mới</span>
+                        <span class="card-badge">Khuyên dùng</span>
+                    </div>
+                    <p class="card-desc">Tạo mới một nhánh và lập tức chuyển sang làm việc trên nhánh đó.</p>
+                    <div class="code-box">
+                        <code>git checkout -b &lt;ten-nhanh&gt;</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git checkout -b <ten-nhanh>')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" data-tags="switch checkout chuyen nhanh">
+                    <div class="card-header">
+                        <span class="card-title">Chuyển sang nhánh có sẵn</span>
+                        <span class="card-badge">Nhánh</span>
+                    </div>
+                    <p class="card-desc">Chuyển đổi vùng làm việc sang một nhánh đã tồn tại.</p>
+                    <div class="code-box">
+                        <code>git switch &lt;ten-nhanh&gt;</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git switch <ten-nhanh>')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" data-tags="merge hop nhat">
+                    <div class="card-header">
+                        <span class="card-title">Hợp nhất nhánh (Merge)</span>
+                        <span class="card-badge">Nhánh</span>
+                    </div>
+                    <p class="card-desc">Hợp nhất nội dung từ nhánh được chỉ định vào nhánh hiện tại.</p>
+                    <div class="code-box">
+                        <code>git merge &lt;ten-nhanh&gt;</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git merge <ten-nhanh>')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" data-tags="delete branch xoa nhanh">
+                    <div class="card-header">
+                        <span class="card-title">Xóa một nhánh</span>
+                        <span class="card-badge">Dọn dẹp</span>
+                    </div>
+                    <p class="card-desc">Xóa an toàn nhánh đã được hợp nhất.</p>
+                    <div class="code-box">
+                        <code>git branch -d &lt;ten-nhanh&gt;</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git branch -d <ten-nhanh>')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Remote & Đồng bộ -->
+        <div class="category-group" data-category="sync">
+            <div class="category-header">
+                <h2 class="category-title">4. Remote & Đồng Bộ Hóa (Remote & Sync)</h2>
+                <span class="category-count">4 lệnh</span>
+            </div>
+            <div class="grid">
+                <div class="card" data-tags="remote add link github">
+                    <div class="card-header">
+                        <span class="card-title">Kết nối Remote Repository</span>
+                        <span class="card-badge">Remote</span>
+                    </div>
+                    <p class="card-desc">Liên kết kho cục bộ với một remote repository từ xa (thường đặt tên là origin).</p>
+                    <div class="code-box">
+                        <code>git remote add origin &lt;url&gt;</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git remote add origin <url>')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" data-tags="push upload day len github">
+                    <div class="card-header">
+                        <span class="card-title">Đẩy commit lên Remote</span>
+                        <span class="card-badge">Đồng bộ</span>
+                    </div>
+                    <p class="card-desc">Đẩy toàn bộ commit của nhánh lên server remote (GitHub, GitLab).</p>
+                    <div class="code-box">
+                        <code>git push -u origin &lt;nhanh&gt;</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git push -u origin <nhanh>')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" data-tags="pull download cap nhat">
+                    <div class="card-header">
+                        <span class="card-title">Kéo mã nguồn mới nhất (Pull)</span>
+                        <span class="card-badge">Đồng bộ</span>
+                    </div>
+                    <p class="card-desc">Tải về và gộp ngay thay đổi mới nhất từ remote vào nhánh làm việc hiện tại.</p>
+                    <div class="code-box">
+                        <code>git pull origin &lt;nhanh&gt;</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git pull origin <nhanh>')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" data-tags="fetch lay thong tin">
+                    <div class="card-header">
+                        <span class="card-title">Cập nhật thông tin Remote (Fetch)</span>
+                        <span class="card-badge">Đồng bộ</span>
+                    </div>
+                    <p class="card-desc">Tải dữ liệu mới nhất từ remote về nhưng chưa tự động merge vào code hiện tại.</p>
+                    <div class="code-box">
+                        <code>git fetch --all</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git fetch --all')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Kiểm tra & Lịch sử -->
+        <div class="category-group" data-category="inspect">
+            <div class="category-header">
+                <h2 class="category-title">5. Trạng Thái & Lịch Sử (Status & Logs)</h2>
+                <span class="category-count">3 lệnh</span>
+            </div>
+            <div class="grid">
+                <div class="card" data-tags="status trang thai file thay doi">
+                    <div class="card-header">
+                        <span class="card-title">Kiểm tra trạng thái</span>
+                        <span class="card-badge">Cơ bản</span>
+                    </div>
+                    <p class="card-desc">Hiển thị các file đã sửa, chưa track hoặc đã đưa vào staging area.</p>
+                    <div class="code-box">
+                        <code>git status</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git status')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" data-tags="log lich su commit tree">
+                    <div class="card-header">
+                        <span class="card-title">Lịch sử commit dạng đồ thị</span>
+                        <span class="card-badge">Hữu ích</span>
+                    </div>
+                    <p class="card-desc">Hiển thị lịch sử commit cô đọng trên 1 dòng kèm nhánh trực quan.</p>
+                    <div class="code-box">
+                        <code>git log --oneline --graph --decorate</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git log --oneline --graph --decorate')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" data-tags="diff so sanh xem thay doi">
+                    <div class="card-header">
+                        <span class="card-title">Xem chi tiết thay đổi (Diff)</span>
+                        <span class="card-badge">Kiểm tra</span>
+                    </div>
+                    <p class="card-desc">So sánh nội dung các dòng vừa sửa đổi so với lần commit trước.</p>
+                    <div class="code-box">
+                        <code>git diff</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git diff')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Hoàn tác & Phục hồi -->
+        <div class="category-group" data-category="undo">
+            <div class="category-header">
+                <h2 class="category-title">6. Hoàn Tác & Cất Giữ (Undo & Stash)</h2>
+                <span class="category-count">4 lệnh</span>
+            </div>
+            <div class="grid">
+                <div class="card" data-tags="restore huy bo thay doi file">
+                    <div class="card-header">
+                        <span class="card-title">Hủy thay đổi trong file</span>
+                        <span class="card-badge">Hoàn tác</span>
+                    </div>
+                    <p class="card-desc">Khôi phục file chưa staged về trạng thái của commit gần nhất.</p>
+                    <div class="code-box">
+                        <code>git restore &lt;file-path&gt;</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git restore <file-path>')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" data-tags="stash cat giu luu tam">
+                    <div class="card-header">
+                        <span class="card-title">Cất giữ tạm thời (Stash)</span>
+                        <span class="card-badge">Nâng cao</span>
+                    </div>
+                    <p class="card-desc">Lưu tạm các thay đổi đang làm dở mà chưa muốn commit để chuyển nhánh.</p>
+                    <div class="code-box">
+                        <code>git stash</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git stash')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" data-tags="stash pop lay lai code da cat">
+                    <div class="card-header">
+                        <span class="card-title">Lấy lại mã nguồn đã Stash</span>
+                        <span class="card-badge">Nâng cao</span>
+                    </div>
+                    <p class="card-desc">Áp dụng lại các thay đổi đã cất giữ trước đó vào vùng làm việc.</p>
+                    <div class="code-box">
+                        <code>git stash pop</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git stash pop')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" data-tags="reset hard quay lai commit">
+                    <div class="card-header">
+                        <span class="card-title">Quay lui Commit (Reset)</span>
+                        <span class="card-badge" style="color: #f87171; border-color: rgba(248, 113, 113, 0.3);">Cẩn trọng</span>
+                    </div>
+                    <p class="card-desc">Hủy bỏ commit gần nhất nhưng vẫn giữ lại các thay đổi trong code.</p>
+                    <div class="code-box">
+                        <code>git reset --soft HEAD~1</code>
+                        <button class="copy-btn" onclick="copyCommand(this, 'git reset --soft HEAD~1')" title="Sao chép">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Pro Tips -->
+    <div class="tips-banner">
+        <h3>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            Kinh Nghiệm & Mẹo Làm Việc Với Git
+        </h3>
+        <ul>
+            <li><strong>Commit thường xuyên:</strong> Chia nhỏ các tính năng thành nhiều commit rõ ràng để dễ review và revert khi cần.</li>
+            <li><strong>Tạo file .gitignore:</strong> Luôn cấu hình <code>.gitignore</code> để tránh commit các thư mục rác như <code>node_modules/</code>, file tạm, mật khẩu hoặc <code>.env</code>.</li>
+            <li><strong>Đặt commit message chuẩn:</strong> Áp dụng chuẩn Conventional Commits (ví dụ: <code>feat:</code> thêm tính năng, <code>fix:</code> sửa lỗi, <code>docs:</code> cập nhật tài liệu).</li>
+            <li><strong>Luôn Pull trước khi Push:</strong> Chạy <code>git pull</code> trước khi push code để tránh conflict với đồng đội.</li>
+        </ul>
+    </div>
+
+    <!-- Toast Component -->
+    <div class="toast" id="toast">
+        <svg class="toast-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+        <span id="toastMsg">Đã sao chép câu lệnh vào bộ nhớ tạm!</span>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 Git Cheat Sheet Guide • Thiết kế hiện đại & Tối ưu cho lập trình viên</p>
+    </footer>
+
+    <!-- Interactive Script -->
+    <script>
+        // Copy to clipboard with toast notification
+        function copyCommand(btn, text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(`Đã sao chép: "${text}"`);
+                
+                // Button feedback animation
+                const originalSvg = btn.innerHTML;
+                btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>`;
+                btn.style.borderColor = '#34d399';
+                setTimeout(() => {
+                    btn.innerHTML = originalSvg;
+                    btn.style.borderColor = '';
+                }, 1500);
+            }).catch(err => {
+                console.error('Không thể sao chép:', err);
+            });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        // Live search filter
+        const searchInput = document.getElementById('searchInput');
+        const cards = document.querySelectorAll('.card');
+        const categoryGroups = document.querySelectorAll('.category-group');
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            filterContent(query, currentCategory);
+        });
+
+        // Category filter tags
+        let currentCategory = 'all';
+        const tagButtons = document.querySelectorAll('.tag-btn');
+
+        tagButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tagButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCategory = btn.getAttribute('data-category');
+                filterContent(searchInput.value.toLowerCase().trim(), currentCategory);
+            });
+        });
+
+        function filterContent(query, category) {
+            categoryGroups.forEach(group => {
+                const groupCategory = group.getAttribute('data-category');
+                const categoryMatch = (category === 'all' || category === groupCategory);
+                
+                let visibleCardsInGroup = 0;
+                const groupCards = group.querySelectorAll('.card');
+
+                groupCards.forEach(card => {
+                    const text = card.textContent.toLowerCase();
+                    const tags = (card.getAttribute('data-tags') || '').toLowerCase();
+                    const matchesSearch = query === '' || text.includes(query) || tags.includes(query);
+
+                    if (categoryMatch && matchesSearch) {
+                        card.style.display = 'flex';
+                        visibleCardsInGroup++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                if (visibleCardsInGroup > 0) {
+                    group.style.display = 'block';
+                } else {
+                    group.style.display = 'none';
+                }
+            });
+        }
+
+        // Keyboard shortcut: '/' to search
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '/' && document.activeElement !== searchInput) {
+                e.preventDefault();
+                searchInput.focus();
+            }
+        });
+    </script>
 </body>
 </html>
